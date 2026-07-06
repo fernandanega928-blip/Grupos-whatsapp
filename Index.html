@@ -1,0 +1,205 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ZapGrupos | Encontre e Divulgue Grupos de WhatsApp</title>
+    <style>
+        :root {
+            --primary-color: #25D366; 
+            --secondary-color: #128C7E;
+            --dark-color: #075E54;
+            --light-bg: #f4f7f6;
+            --card-bg: #ffffff;
+            --text-main: #333333;
+            --text-muted: #666666;
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Segoe UI', sans-serif; }
+        body { background-color: var(--light-bg); color: var(--text-main); line-height: 1.6; }
+
+        header { background-color: var(--dark-color); color: white; padding: 1.5rem; text-align: center; }
+        .ad-space { background-color: #fff3cd; color: #856404; text-align: center; padding: 0.5rem; font-size: 0.9rem; font-weight: bold; border-bottom: 1px solid #ffeeba; }
+        .container { max-width: 1200px; margin: 0 auto; padding: 2rem 1rem; }
+
+        .search-container { display: flex; gap: 1rem; margin-bottom: 2rem; flex-wrap: wrap; }
+        .search-container input, .search-container select, .form-group input, .form-group select, .form-group textarea { flex: 1; min-width: 200px; padding: 0.8rem; border: 1px solid #ddd; border-radius: 8px; font-size: 1rem; outline: none; }
+
+        .btn { background-color: var(--primary-color); color: white; border: none; padding: 0.8rem 1.5rem; border-radius: 8px; font-size: 1rem; font-weight: bold; cursor: pointer; transition: background 0.2s; text-decoration: none; display: inline-block; text-align: center; }
+        .btn:hover { background-color: var(--secondary-color); }
+
+        .main-layout { display: grid; grid-template-columns: 2fr 1fr; gap: 2rem; }
+        @media (max-width: 768px) { .main-layout { grid-template-columns: 1fr; } }
+
+        .groups-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 1.5rem; }
+        .group-card { background: var(--card-bg); border-radius: 12px; padding: 1.5rem; box-shadow: 0 4px 15px rgba(0,0,0,0.05); display: flex; flex-direction: column; justify-content: space-between; position: relative; border-top: 4px solid var(--primary-color); }
+        
+        .group-card.featured { border-top: 4px solid #ffc107; background-color: #fffdf6; }
+        .featured-badge { position: absolute; top: 10px; right: 10px; background-color: #ffc107; color: #000; font-size: 0.75rem; font-weight: bold; padding: 2px 8px; border-radius: 4px; }
+        .group-category { font-size: 0.8rem; text-transform: uppercase; color: var(--secondary-color); font-weight: bold; margin-bottom: 0.5rem; }
+        .group-title { font-size: 1.2rem; margin-bottom: 0.5rem; }
+        .group-desc { font-size: 0.9rem; color: var(--text-muted); margin-bottom: 1.5rem; flex-grow: 1; }
+
+        .sidebar-form { background: var(--card-bg); padding: 1.5rem; border-radius: 12px; box-shadow: 0 4px 15px rgba(0,0,0,0.05); height: fit-content; }
+        .sidebar-form h3 { margin-bottom: 1rem; color: var(--dark-color); }
+        .form-group { margin-bottom: 1rem; }
+        .form-group label { display: block; margin-bottom: 0.4rem; font-weight: 600; font-size: 0.9rem; }
+        .form-group input, .form-group select, .form-group textarea { width: 100%; }
+
+        .pix-box { background: #e8f4fd; border: 1px dashed #2196f3; padding: 12px; border-radius: 6px; margin-bottom: 1rem; font-size: 0.9rem; }
+        .pix-key { font-weight: bold; color: #0b7dda; background: white; padding: 4px 8px; border-radius: 4px; display: inline-block; margin-top: 5px; width: 100%; text-align: center; box-sizing: border-box; font-size: 0.8rem; word-break: break-all; }
+
+        footer { background-color: #333; color: white; text-align: center; padding: 1.5rem; margin-top: 4rem; font-size: 0.9rem; }
+    </style>
+</head>
+<body>
+
+    <!-- TEXTO DO TOPO ATUALIZADO -->
+    <div class="ad-space">🚀 ANUNCIE SEU GRUPO AQUI POR APENAS R$ 10,00 / MÊS!</div>
+
+    <header>
+        <h1>🌐 ZapGrupos</h1>
+        <p>O maior diretório de links de grupos e canais do Brasil</p>
+    </header>
+
+    <div class="container">
+        <div class="search-container">
+            <input type="text" id="searchInput" placeholder="Buscar grupos..." oninput="filterGroups()">
+            <select id="categoryFilter" onchange="filterGroups()">
+                <option value="all">Todas as Categorias</option>
+                <option value="vagas">Empregos e Vagas</option>
+                <option value="investimentos">Finanças e Investimentos</option>
+                <option value="jogos">Jogos e Apostas</option>
+                <option value="marketing">Marketing e Negócios</option>
+                <option value="entretenimento">Humor e Entretenimento</option>
+            </select>
+        </div>
+
+        <div class="main-layout">
+            <div>
+                <h2>Grupos em Destaque</h2>
+                <div class="groups-grid" id="groupsGrid"></div>
+            </div>
+
+            <div class="sidebar-form">
+                <h3>Divulgue seu Grupo</h3>
+                <p style="font-size: 0.85rem; color: #666; margin-bottom: 1rem;">Seu grupo será revisado e postado em até 2 hours.</p>
+                
+                <!-- ÁREA DO PIX ATUALIZADA (R$ 10,00 MENSAL) -->
+                <div class="pix-box">
+                    <strong>💰 Taxa de Publicação: R$ 10,00 / Mês</strong><br>
+                    Pague via PIX antes de enviar os dados:<br>
+                    <span class="pix-key">b82ff850-efcc-4f64-af51-c371782c0eed</span>
+                </div>
+
+                <form id="addGroupForm" onsubmit="handleFormSubmit(event)">
+                    <div class="form-group">
+                        <label for="groupName">Nome do Grupo</label>
+                        <input type="text" id="groupName" required placeholder="Ex: Renda Extra com Milhas">
+                    </div>
+                    <div class="form-group">
+                        <label for="groupCat">Categoria</label>
+                        <select id="groupCat" required>
+                            <option value="vagas">Empregos e Vagas</option>
+                            <option value="investimentos">Finanças e Investimentos</option>
+                            <option value="jogos">Jogos e Apostas</option>
+                            <option value="marketing">Marketing e Negócios</option>
+                            <option value="entretenimento">Humor e Entretenimento</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="groupLink">Link do WhatsApp</label>
+                        <input type="url" id="groupLink" required placeholder="https://chat.whatsapp.com/...">
+                    </div>
+                    <div class="form-group">
+                        <label for="groupDescription">Descrição Curta</label>
+                        <textarea id="groupDescription" rows="3" required placeholder="Fale um pouco sobre o grupo..."></textarea>
+                    </div>
+
+                    <button type="submit" class="btn" style="width: 100%; background-color: #075E54;">Enviar e Chamar no WhatsApp</button>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <footer><p>&copy; 2026 ZapGrupos - Moderação Manual Ativa.</p></footer>
+
+    <script>
+        const SEU_NUMERO_WHATSAPP = "559192134747"; 
+
+        const approvedGroups = [
+            {
+                name: "🔥 PROMOÇÕES DO DIA",
+                category: "marketing",
+                link: "https://chat.whatsapp.com/ExemploPromo",
+                desc: "Achados da Shopee e Amazon com os menores preços da internet todos os dias!",
+                featured: true
+            },
+            {
+                name: "Vagas de Emprego - Home Office",
+                category: "vagas",
+                link: "https://chat.whatsapp.com/ExemploVagas",
+                desc: "Compartilhamento diário de vagas 100% remotas em várias áreas.",
+                featured: true
+            }
+        ];
+
+        function renderGroups(groupsToDisplay) {
+            const grid = document.getElementById('groupsGrid');
+            grid.innerHTML = '';
+            if(groupsToDisplay.length === 0) {
+                grid.innerHTML = '<p style="color: #666; text-align: center; padding: 2rem;">Nenhum grupo encontrado.</p>';
+                return;
+            }
+            groupsToDisplay.forEach(group => {
+                const card = document.createElement('div');
+                card.className = `group-card ${group.featured ? 'featured' : ''}`;
+                const catNames = { vagas: "💼 Vagas", investimentos: "📈 Investimentos", jogos: "🎮 Apostas", marketing: "💰 Marketing", entretenimento: "🎭 Humor" };
+                card.innerHTML = `
+                    <span class="featured-badge">VERIFICADO</span>
+                    <div>
+                        <div class="group-category">${catNames[group.category] || group.category}</div>
+                        <h3 class="group-title">${group.name}</h3>
+                        <p class="group-desc">${group.desc}</p>
+                    </div>
+                    <a href="${group.link}" target="_blank" class="btn">Entrar no Grupo</a>
+                `;
+                grid.appendChild(card);
+            });
+        }
+
+        function filterGroups() {
+            const searchText = document.getElementById('searchInput').value.toLowerCase();
+            const selectedCat = document.getElementById('categoryFilter').value;
+            const filtered = approvedGroups.filter(group => {
+                const matchesText = group.name.toLowerCase().includes(searchText) || group.desc.toLowerCase().includes(searchText);
+                const matchesCat = selectedCat === 'all' || group.category === selectedCat;
+                return matchesText && matchesCat;
+            });
+            renderGroups(filtered);
+        }
+
+        // TEXTO DA MENSAGEM DO WHATSAPP ATUALIZADO COM "MENSAL"
+        function handleFormSubmit(event) {
+            event.preventDefault();
+            const name = document.getElementById('groupName').value;
+            const category = document.getElementById('groupCat').value;
+            const link = document.getElementById('groupLink').value;
+            const desc = document.getElementById('groupDescription').value;
+
+            const mensagem = `Olá! Quero cadastrar meu grupo no plano MENSAL e já fiz o PIX de R$ 10,00.\n\n` +
+                             `*Nome:* ${name}\n` +
+                             `*Categoria:* ${category}\n` +
+                             `*Link:* ${link}\n` +
+                             `*Descrição:* ${desc}\n\n` +
+                             `Estou enviando o comprovante em anexo.`;
+
+            const url = `https://api.whatsapp.com/send?phone=${SEU_NUMERO_WHATSAPP}&text=${encodeURIComponent(mensagem)}`;
+            window.open(url, '_blank');
+        }
+
+        renderGroups(approvedGroups);
+    </script>
+</body>
+  </html>
+
